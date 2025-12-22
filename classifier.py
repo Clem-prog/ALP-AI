@@ -1,0 +1,56 @@
+from keras.models import load_model
+import cv2
+import numpy as np
+
+class Classifier:
+    def __init__(self):
+        self.model = load_model("model/keras_Model.h5", compile=False)
+        self.class_names = open("model/labels.txt").readlines()
+
+    def predictShape(self, frame):
+        prediction = self.model.predict(frame)
+        index = np.argmax(prediction)
+
+        class_name = self.class_names[index][2:].strip().lower()
+        confidence_score = float(prediction[0][index])
+
+        return class_name, confidence_score
+    
+    def showCamera(self, frame):
+        # this is to remove black bars since we're using droidcam
+        # (droidcam generates black bars to the top and bottom of the frame for some reason 😓) 
+        h, w, _ = frame.shape
+        top_crop = int(0.13 * h)
+        bottom_crop = int(0.13 * h)
+        frame = frame[top_crop : h - bottom_crop, :]
+
+        # cropping to center square, and shifted right because my phone camera is funny
+        h, w, _ = frame.shape
+        side = min(h, w)
+
+        shift_right = int(0.05 * w)
+
+        start_x = (w - side) // 2 + shift_right
+        start_y = (h - side) // 2
+
+        # Clamp to frame bounds (important)
+        start_x = max(0, min(start_x, w - side))
+
+        frame = frame[start_y : start_y + side, start_x : start_x + side]
+
+        # Resize the raw frame into (224-height,224-width) pixels
+        frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_AREA)
+
+        # Show the frame in a window
+        cv2.imshow("Webcam frame", frame)
+
+        # Convert BGR to RGB
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        # Make the frame a numpy array and reshape it to the models input shape.
+        frame = np.asarray(frame, dtype=np.float32).reshape(1, 224, 224, 3)
+
+        # Normalize the frame array
+        frame = (frame / 127.5) - 1
+
+        return frame

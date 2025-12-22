@@ -1,0 +1,18 @@
+0 Blue Triangle
+1 Green Triangle
+2 No Item
+3 Hand
+4 Red Triangle
+5 Yellow Triangle
+6 Blue Circle
+7 Yellow Circle
+8 Green Circle
+9 Red Circle
+10 Blue Square
+11 Red Square
+12 Green Square
+13 Yellow Square
+14 Blue Star
+15 Red Star
+16 Green Star
+17 Yellow Star

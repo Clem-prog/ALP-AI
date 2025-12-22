@@ -1,0 +1,18 @@
+You may ask why there is .venv in our project, it's because it is an virtual environment.
+
+A virtual environment in Python is an isolated environment on your computer, 
+where you can run and test your Python projects. It allows you to manage project-specific 
+dependencies without interfering with other projects or the original Python installation.
+(Source: https://www.w3schools.com/python/python_virtualenv.asp)
+
+and to activate it (if it doesn't do it automatically), you need to put 
+".venv\Scripts\activate" into your terminal. you can tell if it's activated
+when there is a (.venv) in your terminal.
+
+We are putting .venv in this project simply to get tensorflow working, since it
+doesn't work well on certain versions of Python (I have 3.13 in my laptop).
+
+commands for libraries (if necessary):
+pip install ffpyplayer
+pip install opencv-python
+pip install tensorflow==2.12.0
