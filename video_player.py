@@ -32,9 +32,6 @@ class VideoPlayer:
             audio_frame, val = player.get_frame()
             grabbed, frame=video.read()
 
-            print("audio_frame:", audio_frame, "val:", val)
-            print("grabbed:", grabbed)
-
             if audio_over != True and (val == 'eof'):
                 audio_over = True
                 player.toggle_pause()

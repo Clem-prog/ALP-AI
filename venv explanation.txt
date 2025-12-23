@@ -9,8 +9,9 @@ and to activate it (if it doesn't do it automatically), you need to put
 ".venv\Scripts\activate" into your terminal. you can tell if it's activated
 when there is a (.venv) in your terminal.
 
-We are putting .venv in this project simply to get tensorflow working, since it
-doesn't work well on certain versions of Python (I have 3.13 in my laptop).
+We are putting python 3.10 .venv in this project simply to get tensorflow working 
+(and not to mess with the main python installed in my device which is 3.13), 
+since it doesn't work well on certain versions of Python.
 
 commands for libraries (if necessary):
 pip install ffpyplayer

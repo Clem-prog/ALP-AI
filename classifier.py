@@ -1,6 +1,7 @@
 from keras.models import load_model
 import cv2
 import numpy as np
+import tkinter as tk
 
 class Classifier:
     def __init__(self):
@@ -38,13 +39,15 @@ class Classifier:
 
         frame = frame[start_y : start_y + side, start_x : start_x + side]
 
+        display = cv2.resize(frame, (400, 400))
+
         # Resize the raw frame into (224-height,224-width) pixels
         frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_AREA)
 
         # Show the frame in a window
-        cv2.imshow("Webcam frame", frame)
+        cv2.imshow("Show Me The Shape!", display)
 
-        # Convert BGR to RGB
+        # Convert BGR to RGB for the model to predict correctly
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # Make the frame a numpy array and reshape it to the models input shape.
@@ -54,3 +57,17 @@ class Classifier:
         frame = (frame / 127.5) - 1
 
         return frame
+    
+    def center_window(self, window_name, win_w, win_h):
+        root = tk.Tk()
+        root.withdraw()
+
+        screen_w = root.winfo_screenwidth()
+        screen_h = root.winfo_screenheight()
+
+        x = (screen_w - win_w) // 2
+        y = (screen_h - win_h) // 2
+
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+        cv2.resizeWindow(window_name, win_w, win_h)
+        cv2.moveWindow(window_name, x, y)
