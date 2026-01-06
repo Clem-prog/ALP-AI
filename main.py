@@ -12,9 +12,6 @@ current_time = time.time()
 
 conf_threshold = 0.85
 
-# For detection frame counting (to avoid false positives due to quick movements)
-detection_frames = 0
-
 # Each step: video + target
 video_steps = [
     {"video":"videos/intro_green_square.mov", "target":"green square"},
@@ -32,6 +29,9 @@ def predictShapeFromCamera(target_shape): #TODO: make this function work with py
     # For audio playback delay
     last_played_time = 0
     delay_playback = 4
+
+    # For detection frame counting (to avoid false positives due to quick movements)
+    detection_frames = 0
     
     while True:
         ret, frame = camera.read()
