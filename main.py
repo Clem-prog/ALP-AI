@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+import tkinter as tk
+from tkinter import ttk
 import classifier
 import pygame
 import time
@@ -45,6 +47,7 @@ def predictShapeFromCamera(target_shape): #TODO: make this function work with py
 
         # this stops the camera after correct shape is detected
         if label == target_shape and confidence >= conf_threshold and detection_frames >= 30:
+            score += 1
             break
 
         # Print prediction and confidence score for debugging(?)
@@ -84,7 +87,58 @@ def playStory():
             classifier.center_window("Show Me The Shape!", 600, 600)
             predictShapeFromCamera(target_shape)
 
-playStory()
+#UI 
+root = tk.Tk()
+root.title("Shape Story Adventure")
+root.geometry("520x360")
+root.resizable(False, False)
+
+current_index = 0
+score = 0
+
+label = tk.Label(
+    root,
+    text="Click START to begin",
+    font=("Arial", 14)
+)
+label.pack(pady=10)
+
+score_label = tk.Label(
+    root,
+    text="Score: 0",
+    font=("Arial", 12)
+)
+score_label.pack()
+
+progress = ttk.Progressbar(
+    root,
+    length=300,
+    maximum=len(video_steps)
+)
+progress.pack(pady=10)
+
+def start_story():
+    global score, current_index
+
+    label.config(text="Playing stories...")
+    score = 0
+    current_index = 0
+    score_label.config(text="Score: 0")
+    progress["value"] = 0
+
+    # Run story logic in background so UI does not freeze
+    import threading
+    threading.Thread(target=playStory(), daemon=True).start()
+
+start_btn = tk.Button(
+    root,
+    text="START STORY",
+    font=("Arial", 12),
+    command=start_story
+)
+start_btn.pack(pady=15)
+
+root.mainloop()
 
 
 
