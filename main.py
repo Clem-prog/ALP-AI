@@ -36,10 +36,12 @@ all_shapes = [
     "blue star", "green star", "red star", "yellow star"
 ]
 
-def predictShapeFromCamera(target_shape):
-    global score, is_running
+def predictShapeFromCamera(target_shape): 
+    # Needed to access the score and stop button
+    global score, is_running 
+    
+    camera = cv2.VideoCapture(0)
 
-    camera = cv2.VideoCapture(0) 
     # For audio playback delay
     last_played_time = 0
     delay_playback = 4
@@ -47,47 +49,56 @@ def predictShapeFromCamera(target_shape):
     # For detection frame counting (to avoid false positives due to quick movements)
     detection_frames = 0
     
-    #Modified #1/8/2026 : This is used to show the window for the quiz
+    # Center the window properly before opening
     classifier.center_window("Show Me The Shape!", 600, 600)
 
     while True:
-        # 1. STOP CHECK
+        # Emergency Stop Check (Prevents crash when switching buttons)
         if not is_running:
             break
-
+            
         ret, frame = camera.read()
         if not ret: break
 
+        #  Added text_overlay so the we can see instructions on screen
         preprocessed_frame = classifier.showCamera(frame, text_overlay=target_shape)
         label, confidence = classifier.predictShape(preprocessed_frame)
+
         current_time = time.time()
 
+        # Listen to the keyboard for presses.
         keyboard_input = cv2.waitKey(1)
         
+        # NEW: Allow pressing 'q' to quit
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-        # 4. SUCCESS LOGIC
-        if label == target_shape and confidence >= conf_threshold:
+
+        if label == target_shape and confidence >= conf_threshold and detection_frames >= 30:
+            # NEW: Add score and update the UI label
+            score += 1
+            root.after(0, lambda: score_label.config(text=f"Score: {score}"))
+            print(f"Correct! Found {target_shape}")
+            break
+
+        print("Class:", label, end=" ")
+        print("Confidence Score:", str(np.round(confidence * 100))[:-2], "%")
+
+        if label != target_shape and label != "no item" and confidence >= conf_threshold and detection_frames >= 30:
+            if current_time - last_played_time > delay_playback:
+                pygame.mixer.music.play()
+                last_played_time = current_time
+            continue
+
+        if confidence >= conf_threshold and label != "no item" and label != "hand":
             detection_frames += 1
-            print(f"Detecting... {detection_frames}/30")
-            
-            if detection_frames >= 30:
-                print(f"Correct! Found {target_shape}")
-                score += 1
-                root.after(0, lambda: score_label.config(text=f"Score: {score}"))
-                break
         else:
             detection_frames = 0
-            
-            # 5. INCORRECT AUDIO LOGIC
-            if label != target_shape and label != "no item" and label != "hand" and confidence >= conf_threshold:
-                if current_time - last_played_time > delay_playback:
-                    pygame.mixer.music.play()
-                    last_played_time = current_time
 
     camera.release()
     cv2.destroyAllWindows()
+    detection_frames = 0
+    target_shape = None
 
 def playStory():
     global score, is_running
