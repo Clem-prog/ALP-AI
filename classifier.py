@@ -5,7 +5,7 @@ import tkinter as tk
 
 class Classifier:
     def __init__(self):
-        self.model = load_model("model/keras_Model.h5", compile=False)
+        self.model = load_model("model/keras_model.h5", compile=False) 
         self.class_names = open("model/labels.txt").readlines()
 
     def predictShape(self, frame):
@@ -17,7 +17,7 @@ class Classifier:
 
         return class_name, confidence_score
     
-    def showCamera(self, frame):
+    def showCamera(self, frame, text_overlay=None):
         # this is to remove black bars since we're using droidcam
         # (droidcam generates black bars to the top and bottom of the frame for some reason 😓) 
         h, w, _ = frame.shape
@@ -35,11 +35,19 @@ class Classifier:
         start_y = (h - side) // 2
 
         # Clamp to frame bounds (important)
-        start_x = max(0, min(start_x, w - side))
+        start_x = max(0, min(start_x, w - side)) 
 
+        # Resize the raw frame into (224-height,224-width) pixels
         frame = frame[start_y : start_y + side, start_x : start_x + side]
 
         display = cv2.resize(frame, (400, 400))
+
+        if text_overlay:
+            # Black Box
+            cv2.rectangle(display, (0,0), (400, 40), (0,0,0), -1)
+            # Text
+            cv2.putText(display, f"Find: {text_overlay}", (10, 30), 
+                        cv2.FONT_HERSHEY_DUPLEX, 0.7, (255, 255, 255), 1)
 
         # Resize the raw frame into (224-height,224-width) pixels
         frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_AREA)
@@ -47,27 +55,23 @@ class Classifier:
         # Show the frame in a window
         cv2.imshow("Show Me The Shape!", display)
 
-        # Convert BGR to RGB for the model to predict correctly
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-        # Make the frame a numpy array and reshape it to the models input shape.
         frame = np.asarray(frame, dtype=np.float32).reshape(1, 224, 224, 3)
 
-        # Normalize the frame array
         frame = (frame / 127.5) - 1
 
         return frame
     
     def center_window(self, window_name, win_w, win_h):
         root = tk.Tk()
-        root.withdraw()
-
+        root.withdraw() 
         screen_w = root.winfo_screenwidth()
         screen_h = root.winfo_screenheight()
-
+        
         x = (screen_w - win_w) // 2
         y = (screen_h - win_h) // 2
-
+        
         cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
         cv2.resizeWindow(window_name, win_w, win_h)
         cv2.moveWindow(window_name, x, y)
