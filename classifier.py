@@ -43,9 +43,7 @@ class Classifier:
         display = cv2.resize(frame, (400, 400))
 
         if text_overlay:
-            # Black Box
             cv2.rectangle(display, (0,0), (400, 40), (0,0,0), -1)
-            # Text
             cv2.putText(display, f"Find: {text_overlay}", (10, 30), 
                         cv2.FONT_HERSHEY_DUPLEX, 0.7, (255, 255, 255), 1)
 
