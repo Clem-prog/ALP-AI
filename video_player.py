@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from ffpyplayer.player import MediaPlayer 
 import ctypes 
+import tkinter as tk
 import time
 
 
@@ -15,10 +16,10 @@ class VideoPlayer:
 
         vid_w, vid_h = 720, 405 #window playing video should be small + in 16:9
 
-        # Modified 1/8/2026 (Using Tkinter here would cause the "Not Responding" crash)
-        user32 = ctypes.windll.user32
-        screen_w = user32.GetSystemMetrics(0)
-        screen_h = user32.GetSystemMetrics(1)
+        root = tk.Tk()
+        root.withdraw() 
+        screen_w = root.winfo_screenwidth()
+        screen_h = root.winfo_screenheight()
         
 
         # Centering the window
@@ -57,7 +58,7 @@ class VideoPlayer:
             cv2.imshow(window_name, frame)
 
             # Allow 'q' key to quit manually
-            if cv2.waitKey(28) & 0xFF == ord("q"):
+            if cv2.waitKey(12) & 0xFF == ord("q"):
                 break
         
         print("Exiting Video Player")

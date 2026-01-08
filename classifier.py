@@ -2,6 +2,7 @@ from keras.models import load_model
 import cv2
 import numpy as np
 import ctypes 
+import tkinter as tk
 
 class Classifier:
     def __init__(self):
@@ -65,9 +66,10 @@ class Classifier:
     
     def center_window(self, window_name, win_w, win_h):
         # Modified 1/8/2026 : high chance we need to channge to ctypes since tkinter will crashed if we change from story to quiz
-        user32 = ctypes.windll.user32 
-        screen_w = user32.GetSystemMetrics(0)
-        screen_h = user32.GetSystemMetrics(1)
+        root = tk.Tk()
+        root.withdraw() 
+        screen_w = root.winfo_screenwidth()
+        screen_h = root.winfo_screenheight()
         
         x = (screen_w - win_w) // 2
         y = (screen_h - win_h) // 2
