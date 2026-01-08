@@ -1,54 +1,63 @@
-import cv2 # pip install opencv-python
+import cv2 
 import numpy as np
-from ffpyplayer.player import MediaPlayer #pip install ffpyplayer
-import tkinter as tk
+from ffpyplayer.player import MediaPlayer 
+import ctypes 
 import time
+
 
 class VideoPlayer:
     
-    def PlayVideo(self, video_path):
-        video=cv2.VideoCapture(video_path)
+    # Modified 1/8/2026 : Added stop_check parameter to listen for "Stop" signals from main.py, if this isnt added even if we remove tkinter it will still crash
+    def PlayVideo(self, video_path, stop_check=None):
+        video = cv2.VideoCapture(video_path)
         player = MediaPlayer(video_path)
         audio_over = False
 
         vid_w, vid_h = 720, 405 #window playing video should be small + in 16:9
 
-        root = tk.Tk()
-        root.withdraw() 
-        screen_w = root.winfo_screenwidth()
-        screen_h = root.winfo_screenheight()
+        # Modified 1/8/2026 (Using Tkinter here would cause the "Not Responding" crash)
+        user32 = ctypes.windll.user32
+        screen_w = user32.GetSystemMetrics(0)
+        screen_h = user32.GetSystemMetrics(1)
+        
 
         # Centering the window
         x = (screen_w - vid_w) // 2
         y = (screen_h - vid_h) // 2
 
-        cv2.namedWindow("The Adventure of Professor Octagon", cv2.WINDOW_NORMAL)
-        cv2.resizeWindow("The Adventure of Professor Octagon", vid_w, vid_h)
-        cv2.moveWindow("The Adventure of Professor Octagon", x, y)
+        window_name = "The Adventure of Professor Octagon" 
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+        cv2.resizeWindow(window_name, vid_w, vid_h)
+        cv2.moveWindow(window_name, x, y)
 
-        time.sleep(0.3)  # Give some time for the window to appear so that audio syncs
+        time.sleep(0.3) # Give some time for the window to appear so that audio syncs
+
 
         while True:
+            # FIX: Check if main.py wants us to stop
+            if stop_check is not None and stop_check():
+                print("Video Force Stopped by User")
+                break
+
             audio_frame, val = player.get_frame()
-            grabbed, frame=video.read()
+            grabbed, frame = video.read()
 
             if audio_over != True and (val == 'eof'):
                 audio_over = True
                 player.toggle_pause()
-                print("Audio Finished")
 
             if not grabbed:
                 print("End of Video")
                 break
 
             frame = cv2.resize(frame, (vid_w, vid_h))
-            cv2.imshow("The Adventure of Professor Octagon", frame)
+            cv2.imshow(window_name, frame)
 
-            if cv2.waitKey(12) & 0xFF == ord("q"):
+            # Allow 'q' key to quit manually
+            if cv2.waitKey(28) & 0xFF == ord("q"):
                 break
         
-        print("Exiting")
+        print("Exiting Video Player")
         audio_over = False
         video.release()
         cv2.destroyAllWindows()
-
