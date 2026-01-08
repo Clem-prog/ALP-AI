@@ -56,7 +56,14 @@ def predictShapeFromCamera(target_shape):
         # Emergency Stop Check (Prevents crash when switching buttons)
         if not is_running:
             break
-            
+        
+        try:
+            if cv2.getWindowProperty("Show Me The Shape!", cv2.WND_PROP_VISIBLE) < 1:
+                is_running = False # Kill the whole Story/Quiz
+                break
+        except:
+            pass
+
         ret, frame = camera.read()
         if not ret: break
 
@@ -69,7 +76,7 @@ def predictShapeFromCamera(target_shape):
         # Listen to the keyboard for presses.
         keyboard_input = cv2.waitKey(1)
         
-        # NEW: Allow pressing 'q' to quit
+        # press 'q' to quit
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
@@ -108,8 +115,6 @@ def playStory():
     for i, step in enumerate(video_steps):
         if not is_running: break
         
-        root.after(0, lambda val=i: progress.configure(value=val))
-        
         video_path = step["video"]
         target_shape = step["target"]
 
@@ -131,27 +136,24 @@ def playStory():
     
     if is_running: 
         root.after(0, lambda: label.config(text="Story Finished!"))
-        root.after(0, lambda: progress.configure(value=len(video_steps)))
-
+        
 def playQuiz():
     global score
     score = 0
     root.after(0, lambda: score_label.config(text=f"Score: {score}"))
     
     questions = random.sample(all_shapes, 5) 
-    root.after(0, lambda: progress.configure(maximum=len(questions)))
+  
 
     for i, target in enumerate(questions):
         if not is_running: break
         
         root.after(0, lambda t=target, idx=i: label.config(text=f"Quiz {idx+1}/{len(questions)}: Show me {t}"))
-        root.after(0, lambda val=i: progress.configure(value=val))
         
         predictShapeFromCamera(target)
         
     if is_running: 
         root.after(0, lambda: label.config(text=f"Quiz Done! Final Score: {score}/{len(questions)}"))
-        root.after(0, lambda: progress.configure(value=len(questions)))
 
 def reset_and_run(target_function):
     """Kills existing threads safely, waits, then starts new one"""
@@ -195,8 +197,6 @@ label.pack(pady=10)
 score_label = tk.Label(root, text="Score: 0", font=("Arial", 12))
 score_label.pack()
 
-progress = ttk.Progressbar(root, length=300, maximum=10)
-progress.pack(pady=10)
 
 # BUTTONS
 btn_frame = tk.Frame(root)

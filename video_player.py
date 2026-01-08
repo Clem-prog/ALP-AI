@@ -39,6 +39,9 @@ class VideoPlayer:
                 print("Video Force Stopped by User")
                 break
 
+            if cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE) < 1:
+                print("Video Window Closed")
+
             audio_frame, val = player.get_frame()
             grabbed, frame = video.read()
 
