@@ -65,7 +65,6 @@ class Classifier:
         return frame
     
     def center_window(self, window_name, win_w, win_h):
-        # Modified 1/8/2026 : high chance we need to channge to ctypes since tkinter will crashed if we change from story to quiz
         root = tk.Tk()
         root.withdraw() 
         screen_w = root.winfo_screenwidth()

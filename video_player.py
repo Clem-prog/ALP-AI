@@ -7,8 +7,7 @@ import time
 
 
 class VideoPlayer:
-    
-    # Modified 1/8/2026 : Added stop_check parameter to listen for "Stop" signals from main.py, if this isnt added even if we remove tkinter it will still crash
+    # Modified 1/8/2026 : Added stop_check parameter to listen for "Stop" signals from main.py
     def PlayVideo(self, video_path, stop_check=None):
         video = cv2.VideoCapture(video_path)
         player = MediaPlayer(video_path)
@@ -35,7 +34,7 @@ class VideoPlayer:
 
 
         while True:
-            # FIX: Check if main.py wants us to stop
+            #Check if main.py wants us to stop
             if stop_check is not None and stop_check():
                 print("Video Force Stopped by User")
                 break
