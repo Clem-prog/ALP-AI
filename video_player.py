@@ -1,7 +1,5 @@
-import cv2 
-import numpy as np
-from ffpyplayer.player import MediaPlayer 
-import ctypes 
+import cv2
+from ffpyplayer.player import MediaPlayer
 import tkinter as tk
 import time
 
