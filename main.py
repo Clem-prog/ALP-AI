@@ -193,10 +193,10 @@ btn_frame.pack(pady=20)
 
 start_btn = tk.Button(btn_frame, text="START Story", font=("Arial", 12), bg="#dddddd", width=15, 
                      command=lambda:reset_and_run(playStory))
-start_btn.grid(row=0, column=1, padx=10)
+start_btn.grid(row=0, column=0, padx=10)
 
 quiz_btn = tk.Button(btn_frame, text="START Quiz", font=("Arial", 12), bg="#dddddd", width=15, 
                       command=lambda:reset_and_run(playQuiz))
-quiz_btn.grid(row=0, column=0, padx=10)
+quiz_btn.grid(row=0, column=1, padx=10)
 
 root.mainloop()
