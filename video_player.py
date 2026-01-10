@@ -3,7 +3,6 @@ from ffpyplayer.player import MediaPlayer
 import tkinter as tk
 import time
 
-
 class VideoPlayer:
     def PlayVideo(self, video_path, stop_check=None):
         video = cv2.VideoCapture(video_path)
