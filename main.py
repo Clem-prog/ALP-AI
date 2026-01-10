@@ -6,10 +6,15 @@ import pygame
 import time
 import random 
 import threading
+import resourcepath
 
 # Initialize Audio
 pygame.mixer.init()
-pygame.mixer.music.load("audios/incorrect.wav")
+
+resource_path = resourcepath.resource_path
+
+sound_path = resource_path("audios/incorrect.wav")
+incorrect_sound = pygame.mixer.Sound(sound_path)
 
 # Initialize Classifier
 classifier = classifier.Classifier()
@@ -88,7 +93,7 @@ def predictShapeFromCamera(target_shape):
 
         if label != target_shape and label != "no item" and confidence >= conf_threshold and detection_frames >= 30:
             if current_time - last_played_time > delay_playback:
-                pygame.mixer.music.play()
+                incorrect_sound.play()
                 last_played_time = current_time
             continue
 
@@ -119,7 +124,7 @@ def playStory():
 
         from video_player import VideoPlayer
         player = VideoPlayer()
-        player.PlayVideo(video_path, stop_check=lambda: not is_running)
+        player.PlayVideo(resource_path(video_path), stop_check=lambda: not is_running)
 
         if not is_running: break
         
@@ -130,7 +135,7 @@ def playStory():
         root.after(0, lambda: label.config(text="Story Finished!"))
         
 def playQuiz():
-    global score
+    global score, is_running
     score = 0
     root.after(0, lambda: score_label.config(text=f"Score: {score}"))
     
@@ -176,23 +181,23 @@ root.title("Shape Story Adventure")
 root.geometry("520x450") 
 root.resizable(False, False)
 
-label = tk.Label(root, text="Select a Mode", font=("Arial", 14))
-label.pack(pady=10)
+score_label = tk.Label(root, text="Score: 0", font=("Arial", 14))
+score_label.pack(pady=10)
 
-score_label = tk.Label(root, text="Score: 0", font=("Arial", 12))
-score_label.pack()
+label = tk.Label(root, text="Select Mode", font=("Arial", 12))
+label.pack()
 
 
 # BUTTONS
 btn_frame = tk.Frame(root)
 btn_frame.pack(pady=20)
 
-start_btn = tk.Button(btn_frame, text="START STORY", font=("Arial", 12), bg="#dddddd", width=15, 
-                      command=lambda:reset_and_run(playStory))
-start_btn.grid(row=0, column=0, padx=10)
+quiz_btn = tk.Button(btn_frame, text="START Quiz", font=("Arial", 12), bg="#dddddd", width=15, 
+                      command=lambda:reset_and_run(playQuiz))
+quiz_btn.grid(row=0, column=0, padx=10)
 
-quiz_btn = tk.Button(btn_frame, text="START QUIZ", font=("Arial", 12), bg="#dddddd", width=15, 
-                     command=lambda:reset_and_run(playQuiz))
-quiz_btn.grid(row=0, column=1, padx=10)
+start_btn = tk.Button(btn_frame, text="START Story", font=("Arial", 12), bg="#dddddd", width=15, 
+                     command=lambda:reset_and_run(playStory))
+start_btn.grid(row=0, column=1, padx=10)
 
 root.mainloop()

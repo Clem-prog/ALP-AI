@@ -2,11 +2,14 @@ from keras.models import load_model
 import cv2
 import numpy as np
 import tkinter as tk
+import resourcepath
+
+resource_path = resourcepath.resource_path
 
 class Classifier:
     def __init__(self):
-        self.model = load_model("model/keras_model.h5", compile=False) 
-        self.class_names = open("model/labels.txt").readlines()
+        self.model = load_model(resource_path("model/keras_model.h5"), compile=False) 
+        self.class_names = open(resource_path("model/labels.txt")).readlines()
 
     def predictShape(self, frame):
         prediction = self.model.predict(frame)
