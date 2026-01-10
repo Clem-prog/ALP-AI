@@ -8,7 +8,7 @@ Model is trained by putting 1 shape in 2 surfaces: purple colored binder, and wh
 when using this program, and the shape isn't recognized when putting it in a normal surface, try 
 using a surface that is purple.
 
-Camera has to be using droidcam (software to make phone as webcam), if you don't have droidcam
+Camera has to be using droidcam (software to make phone as webcam: https://droidcam.app/), if you don't have droidcam
 and it doesn't show anything, you may need to change:
 
 cv2.VideoCapture(0) => cv2.VideoCapture(1) from the predictShapeFromCamera function in main.py
