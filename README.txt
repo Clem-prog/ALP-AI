@@ -5,7 +5,8 @@ For the classifier to work more confidently, surroundings should be clean
 and there has to be good lighting.
 
 Model is trained by putting 1 shape in 2 surfaces: purple colored binder, and white wood surface,
-if putting it in a normal surface doesn't help recognizing, try using a surface that is purple.
+when using this program, and the shape isn't recognized when putting it in a normal surface, try 
+using a surface that is purple.
 
 Camera has to be using droidcam (software to make phone as webcam), if you don't have droidcam
 and it doesn't show anything, you may need to change:
